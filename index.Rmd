@@ -1,0 +1,212 @@
+---
+title: "Programa de Prevención y Control del Dengue de Campeche"
+output: 
+  flexdashboard::flex_dashboard:
+      theme: united
+      social: ["twitter", "facebook", "menu", "github"]
+output_dir: libs      
+---
+
+```{r setup}
+
+# Step 1. load the library ####
+options(shiny.maxRequestSize=30*1024^2)
+library(formattable)
+library(tmap)
+library(rmarkdown)
+library(knitr)
+library(shiny)
+library(flexdashboard)
+library(plotly)
+library(boldenr)
+library(magrittr)
+library(leaflet)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+library(dash)
+library(ECharts2Shiny)
+library(sf)
+
+# Step 3. load the functions ####
+if(as.vector(Sys.info()["sysname"]) == "Darwin"){
+    
+    # 1.6 hotspots cases
+    source("~/Dropbox/r_developments/r_new_functions/3.Functions/risk_agebs.R")
+    
+    source("~/Dropbox/r_developments/r_new_functions/3.Functions/risk_map.R")
+    
+    source("~/Dropbox/r_developments/r_new_functions/3.Functions/hotspots_map.R")
+    
+    # 1. 7 eggs hotspots ####
+    
+    source("~/Dropbox/r_developments/r_dashboards/github_pages/test_denv_dash_oax/3.Functions/eggs_hotspots_intensity_map_year.R")
+
+    
+} else if(as.vector(Sys.info()["sysname"]) == "Windows"){
+    
+
+    # 1.6 hotspots
+
+
+    # Step  load the risk_ageb function ###
+    source("C:/Users/HOME/Dropbox/r_developments/r_new_functions/3.Functions/risk_agebs.R")
+    
+    # Step  load the risk_map function ####
+    source("C:/Users/HOME/Dropbox/r_developments/r_new_functions/3.Functions/risk_map.R")
+
+    # Step  load the hotspots map ####
+    source("C:/Users/HOME/Dropbox/r_developments/r_new_functions/3.Functions/hotspots_map.R")
+    
+    # Step eggs hotspots ####
+    source("C:/Users/HOME/Dropbox/r_developments/r_new_functions/3.Functions/eggs_hotspots_intensity_map_year.R")
+    
+    
+
+    
+} else if(as.vector(Sys.info()["sysname"]) == "Linux"){
+    
+}
+
+
+
+# Step 5. Load the RData files ####
+if(as.vector(Sys.info()["sysname"]) == "Darwin"){
+    # load the blocks
+    load("~/OneDrive/automatic_read_ine_2010/8.RData/block_ine10_mx.RData")
+    
+    # load the dengue cases hotspots
+    load("~/Dropbox/hotspots_2021/8.RData/cases_hotspots_agebs19.RData")
+    hotspots <- cases_hotspots_agebs19 |>
+    sf::st_make_valid()
+    
+    # load the vector hotspots
+    load("~/OneDrive/proyects/hotspots_eggs/8.RData/04/betas/04_campeche_zinb1_betas.RData")
+    
+    
+} else if(as.vector(Sys.info()["sysname"]) == "Windows"){
+    
+    # Step 1. load the hotspots dengue cases ####
+   load("E:/backup/Dropbox_respaldo_2023_01_03/hotspots_2022/8.RData/cases_hotspots_agebs19.RData")
+    
+    cases_hotspots_agebs19 <- cases_hotspots_agebs19 |>
+    sf::st_make_valid()
+
+    
+    
+    # load the vector hotspots
+    load("D:/OneDrive/proyects/hotspots_eggs/8.RData/04_campeche/betas/04_campeche_zinb1_betas.RData")
+    
+} else if(as.vector(Sys.info()["sysname"]) == "Linux"){
+    
+}
+
+
+```
+
+# **Hotspots de la Transmisión de Dengue**
+
+## Column {.tabset}
+
+### [**Campeche**]{style="color:#990000"}
+
+```{r hotspots_dengue_campeche}
+hotspots_map(cve_ent = "04",
+             locality = "San Francisco de Campeche",
+             hotspots = cases_hotspots_agebs19,
+             static_map = FALSE)
+
+```
+
+
+### [**Ciudad del Carmen**]{style="color:#990000"}
+
+```{r hotspots_dengue_cd_carmen}
+hotspots_map(cve_ent = "04",
+             locality = "Ciudad del Carmen",
+             hotspots = cases_hotspots_agebs19,
+             static_map = FALSE)
+
+```
+
+### [**Escárcega**]{style="color:#990000"}
+
+```{r hotspots_dengue_escarcega}
+hotspots_map(cve_ent = "04",
+             locality = "Escárcega",
+             hotspots = cases_hotspots_agebs19,
+             static_map = FALSE)
+
+```
+
+# **Hotspots del vector de Dengue**
+
+## Column {.tabset}
+
+### [**Campeche**]{style="color:#990000"}
+
+```{r vector_hotspots_campeche, dpi = 300, warning=FALSE, message=FALSE}
+eggs_hotspots_intensity_map_year(betas = betas_04_campeche,
+                                 locality = "San Francisco de Campeche",
+                                 cve_ent = "04",
+                                 palette = rcartocolor::carto_pal,
+                                 name = "SunsetDark")
+```
+
+
+### [**Ciudad del Carmen**]{style="color:#990000"}
+
+```{r vector_hotspots_cd_carmen, dpi = 300, warning=FALSE, message=FALSE}
+eggs_hotspots_intensity_map_year(betas = betas_04_campeche,
+                                 locality = "Ciudad del Carmen",
+                                 cve_ent = "04",
+                                 palette = rcartocolor::carto_pal,
+                                 name = "SunsetDark")
+```
+
+### [**Escarcega**]{style="color:#990000"}
+
+```{r vector_hotspots_escarcega, dpi = 300, warning=FALSE, message=FALSE}
+eggs_hotspots_intensity_map_year(betas = betas_04_campeche,
+                                 locality = "Escarcega",
+                                 cve_ent = "04",
+                                 palette = rcartocolor::carto_pal,
+                                 name = "SunsetDark")
+```
+
+# **Mapas de Riesgo de Transmisión**
+
+## Column {.tabset}
+
+### [**Campeche**]{style="color:#7d9029"}
+
+```{r, risk_map_campeche, echo=FALSE}
+risk <- risk_agebs(spde_model = betas_04_campeche,
+                          hotspots = cases_hotspots_agebs19,
+                          locality = "San Franciscod de Campeche",
+                          cve_ent = "04",
+                          intensity_perc = 25)
+risk_map(risk = risk, staticmap = FALSE)
+```
+
+### [**Ciudad del Carmen**]{style="color:#7d9029"}
+
+```{r, risk_map_cd_carmen, echo=FALSE}
+risk <- risk_agebs(spde_model = betas_04_campeche,
+                          hotspots = cases_hotspots_agebs19,
+                          locality = "Ciudad del Carmen",
+                          cve_ent = "04",
+                          intensity_perc = 25)
+risk_map(risk = risk, staticmap = FALSE)
+```
+
+### [**Escarcega**]{style="color:#7d9029"}
+
+```{r, risk_map_escarcega, echo=FALSE}
+risk <- risk_agebs(spde_model = betas_04_campeche,
+                          hotspots = cases_hotspots_agebs19,
+                          locality = "Escarcega",
+                          cve_ent = "04",
+                          intensity_perc = 25)
+risk_map(risk = risk, staticmap = FALSE)
+```
